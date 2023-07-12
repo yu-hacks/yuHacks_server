@@ -1,24 +1,60 @@
-import User from "../../models/User";
-export const resolvers = {
-    Query: {
-        user: async (_: any, { id }: { id: string }) => {
-            return await User.findById(id);
-        },
-        users: async () => {
-            return await User.find();
-        },
+import User, { IUser, UserRole } from '../../models/User'
+
+import { IResolvers } from '@graphql-tools/utils'
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+
+const resolvers: IResolvers = {
+  Query: {
+    users: async () => {
+      return await User.find();
     },
-    Mutation: {
-        addUser: async (_: any, args: any) => {
-            const user = new User({
-                ...args,
-                role: 'PENDING',
-                team: null
-            });
-            return await user.save();
-        },
-        updateUserRole: async (_: any, { id, role }: { id: string, role: string }) => {
-            return await User.findByIdAndUpdate(id, { role }, { new: true }); // the option { new: true } ensures the updated document is returned
-        },
-    }
+    user: async (_, { userId }) => {
+      return await User.findById(userId);
+    },
+    login: async (_, { input }) => {
+      const user = await User.findOne({ email: input.email });
+
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      const isEqual = await bcrypt.compare(input.password, user.password);
+
+      if (!isEqual) {
+        throw new Error('Password is incorrect');
+      }
+
+      const token = jwt.sign(
+        { userId: user.id, email: user.email },
+        'xxxx',  
+        { expiresIn: '1h' },
+      );
+
+      return { userId: user.id, token: token, tokenExpiration: 1 };
+    },
+  },
+  Mutation: {
+    registerUser: async (_, { input }) => {
+      input.password = await bcrypt.hash(input.password, 10);
+      const newUser = new User({ ...input, role: UserRole.PENDING });
+      await newUser.save();
+      return newUser;
+    },
+    applyHacker: async (_, { input }) => {
+      const user = await User.findById(input.userId);
+
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      Object.assign(user, input);
+      user.role = UserRole.HACKER;
+      await user.save();
+
+      return user;
+    },
+  },
 };
+
+export default resolvers;

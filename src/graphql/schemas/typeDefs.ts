@@ -10,24 +10,55 @@ export const typeDefs = gql`
     }
 
     type User {
-        id: ID!
-        userId: String!
+        userId: ID!
         firstName: String!
         lastName: String!
         email: String!
         password: String!
         registrationDate: String!
         role: UserRole!
-        team: ID
+        emailVerified: Boolean!
+        passwordResetToken: String!
+        team: ID!
+
+        school: String
+        year: String
+        website: String
+        github: String
+        linkedin: String
+        resume: String
+        allergies: String
+        dietaryNeeds: String
+        clothingSize: String
     }
 
-    type Query {
-        user(id: ID!): User
-        users: [User]
-    }
+   input RegistrationInput {
+    firstName: String!
+    lastName: String!
+    email: String!
+    password: String!
+   }
 
-    type Mutation {
-        addUser(userId: String!, firstName: String!, lastName: String!, email: String!, password: String!): User
-        updateUserRole(id: ID!, role: UserRole!): User
-    }
+   input HackerApplicationInput {
+    userId: ID!
+    school: String!
+    year: String!
+    website: String
+    github: String
+    linkedin: String
+    resume: String
+    allergies: String
+    dietaryNeeds: String
+    clothingSize: String
+   }
+
+   type Query {
+    users: [User!]!
+    user(userId: ID!): User
+   }
+
+   type Mutation {
+    registerUser(input: RegistrationInput!): User!
+    applyHacker(input: HackerApplicationInput!): User!
+   }
 `;

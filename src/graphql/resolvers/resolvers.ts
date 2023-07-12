@@ -1,5 +1,4 @@
 import User, { IUser, UserRole } from '../../models/User'
-
 import { IResolvers } from '@graphql-tools/utils'
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';

@@ -10,7 +10,7 @@ export const typeDefs = gql`
     }
 
     type User {
-        userId: ID!
+        _id: ID!
         firstName: String!
         lastName: String!
         email: String!
@@ -30,6 +30,11 @@ export const typeDefs = gql`
         allergies: String
         dietaryNeeds: String
         clothingSize: String
+    }
+
+    input LoginInput {
+        email: String!
+        password: String!
     }
 
    input RegistrationInput {
@@ -54,10 +59,11 @@ export const typeDefs = gql`
 
    type Query {
     users: [User!]!
-    user(userId: ID!): User
+    user(_id: ID!): User
    }
 
    type Mutation {
+    loginUser(input: LoginInput!): User!
     registerUser(input: RegistrationInput!): User!
     applyHacker(input: HackerApplicationInput!): User!
    }

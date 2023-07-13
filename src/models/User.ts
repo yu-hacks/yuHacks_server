@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema, Types } from 'mongoose';
+import mongoose, { Document, Schema, Types, ObjectId } from 'mongoose';
 
 
 export enum UserRole {
@@ -9,11 +9,10 @@ export enum UserRole {
 }
 
 export interface IUser {
-    userId: String,
     firstName: String,
     lastName: String,
     email: String,
-    password: String,
+    password: string,
     registrationDate: Date,
     role: UserRole,
     emailVerified: Boolean,
@@ -32,7 +31,6 @@ export interface IUser {
 }
 
 const UserSchema: Schema<IUser> = new Schema ({
-    userId: { type: String, requiresd: true, unique: true},
     firstName: { type: String, required: true},
     lastName: { type: String, required: true},
     email: { type: String, required: true, unique: true},
@@ -55,3 +53,4 @@ const UserSchema: Schema<IUser> = new Schema ({
 });
 
 export default mongoose.model<IUser>('User', UserSchema);
+

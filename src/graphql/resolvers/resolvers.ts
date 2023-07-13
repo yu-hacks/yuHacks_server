@@ -27,7 +27,7 @@ const resolvers: IResolvers = {
       }
     ) => {
       args.input.password = await bcrypt.hash(args.input.password, 10);
-      const newUser = new User({ ...args.input, role: UserRole.HACKER.toLowerCase()});
+      const newUser = new User({ ...args.input, role: UserRole.PENDING});
       await newUser.save();
       return newUser;
     },

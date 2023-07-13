@@ -20,6 +20,8 @@ export const typeDefs = gql`
         emailVerified: Boolean!
         passwordResetToken: String!
         team: ID!
+        token: String
+        tokenExpiration: Int
 
         school: String
         year: String
@@ -45,7 +47,7 @@ export const typeDefs = gql`
    }
 
    input HackerApplicationInput {
-    userId: ID!
+    _id: ID!
     school: String!
     year: String!
     website: String

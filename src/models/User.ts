@@ -2,10 +2,10 @@ import mongoose, { Document, Schema, Types, ObjectId } from 'mongoose';
 
 
 export enum UserRole {
-    HACKER = "hacker",
-    SPONSOR = "sponsor",
-    ADMIN = "admin",
-    PENDING = 'pending',
+    HACKER = "HACKER",
+    SPONSOR = "SPONSOR",
+    ADMIN = "ADMIN",
+    PENDING = 'PENDING',
 }
 
 export interface IUser {

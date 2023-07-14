@@ -9,6 +9,7 @@ export enum UserRole {
 }
 
 export interface IUser {
+    _id?: ObjectId,
     firstName: String,
     lastName: String,
     email: String,
@@ -16,8 +17,8 @@ export interface IUser {
     registrationDate: Date,
     role: UserRole,
     emailVerified: Boolean,
-    passwordResetToken: String,
-    team: Types.ObjectId | undefined;
+    passwordResetToken?: String,
+    team?: Types.ObjectId | undefined;
 
     school?: String,
     year?: String,

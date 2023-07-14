@@ -54,9 +54,9 @@ export default class GenericMongoService<T> {
         }
     }
 
-    async create(obj: T, options?: QueryOptions<T>): Promise<any> {
+    async create(obj: T, options?: QueryOptions<T>): Promise<T> {
         try{
-            return this.model.create(obj, options)
+            return this.model.create(obj, options) as T
         }catch(err){
             console.log(err)
             return Promise.reject(`Something went wrong... \n${err}`) 

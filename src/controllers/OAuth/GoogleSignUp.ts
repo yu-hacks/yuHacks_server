@@ -1,8 +1,8 @@
 import { Profile } from "passport";
 import { callbackURLGoogle, googleClientID, googleClientSecret } from "../../utils/config";
-import { IUser, UserRole } from "../../models/User";
-import {userMongoService} from "../../index"
+import User, { IUser, UserRole } from "../../models/User";
 import saveUser from "./AuthUtil";
+import GenericMongoService from "../../mongo.services/genericMongoService";
 const passport = require('passport')
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 

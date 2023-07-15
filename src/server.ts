@@ -2,7 +2,6 @@ import express from 'express'
 import { Request, Response } from 'express'
 import { typeDefs } from './graphql/schemas/typeDefs'
 import resolvers from './graphql/resolvers/resolvers'
-const mongoose = require("mongoose");
 import cors from 'cors'
 import { ApolloServer } from 'apollo-server-express';
 const connectDB = require('./db/index')

@@ -38,6 +38,7 @@ const UserSchema: Schema<IUser> = new Schema ({
     password: { type:String, required: false,},
     registrationDate: { type: Date, required: true, default: Date.now},
     role: { type:String, required: true, enum: UserRole},
+    emailVerified: { type:Boolean, required: true, default: false},
     team: { type: Types.ObjectId, ref: 'Team'},
 
     school: {type: String, required: false},

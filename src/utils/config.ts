@@ -12,7 +12,9 @@ export const googleClientID: string = process.env.googleClientID ? process.env.g
 export const googleClientSecret: string = process.env.googleSecret ? process.env.googleSecret: " "
 export const callbackURLGoogle: string = process.env.callbackURLGoogle ? process.env.callbackURLGoogle: " "
 
-
 export const githubClientID: string = process.env.githubClientID ? process.env.githubClientID: " "
 export const githubClientSecret: string = process.env.githubClientSecret ? process.env.githubClientSecret: " "
 export const callbackURLGithub: string = process.env.callbackURLGithub ? process.env.callbackURLGithub: " "
+
+export const verificationEmailUser: string = process.env.verificationEmailUser ? process.env.verificationEmailUser: " "
+export const verificationEmailAppPass: string = process.env.verificationEmailAppPass ? process.env.verificationEmailAppPass: " "

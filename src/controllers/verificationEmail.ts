@@ -12,7 +12,7 @@ const users = [
 ]
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
+  host: "smtp.gmail.com", // !!! MIGHT NEED TO CHANGE DEPENDING ON WHAT EMAIL WE USE
   port: 465, 
   secure: true, // true for 465, false for other ports
   auth: {
@@ -25,7 +25,7 @@ const transporter = nodemailer.createTransport({
 export function sendVerificationEmail(name: string, email: string): boolean {
   let verificationToken = uuidv4();
 
-  let mailOptions = {
+  let mailOptions = { // !!! CHANGE WORDING AND FORMAT
       from: verificationEmailUser,
       to: email,
       subject: "Verify Email YuHacks 2023",

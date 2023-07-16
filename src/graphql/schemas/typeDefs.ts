@@ -34,6 +34,12 @@ export const typeDefs = gql`
         clothingSize: String
     }
 
+    type Verification {
+        email: String!
+        verificationToken: String!
+        date: String!
+    }
+
     input LoginInput {
         email: String!
         password: String!

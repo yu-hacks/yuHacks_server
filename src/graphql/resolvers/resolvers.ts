@@ -2,12 +2,12 @@ import User, { IUser, UserRole } from '../../models/User'
 import { IResolvers } from '@graphql-tools/utils'
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { Interface } from 'readline';
-
+import { sendVerificationEmail } from '../../controllers/verificationEmail';
 
 const resolvers: IResolvers = {
   Query: {
     users: async () => {
+      console.log("HELLO")
       return await User.find();
     },
     user: async (_, args: { _id: string }) => {
@@ -27,10 +27,15 @@ const resolvers: IResolvers = {
       }
     ) => {
       args.input.password = await bcrypt.hash(args.input.password, 10);
-      const newUser = new User({ ...args.input, role: UserRole.PENDING});
+      const newUser = new User({ ...args.input, role: UserRole.PENDING, emailVerified: false});
       await newUser.save();
+      if (!sendVerificationEmail(args.input.firstName, args.input.email)) {
+        console.log("Failed sending verification email to " + args.input.email + ". Trying again.");
+        sendVerificationEmail(args.input.firstName, args.input.email) ? console.log("Succesfully sent") : console.log("Failed sending again"); 
+      }
       return newUser;
     },
+
     applyHacker: async (_, { input }) => {
       const user = await User.findById(input._id);
 

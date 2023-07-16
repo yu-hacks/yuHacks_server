@@ -4,13 +4,6 @@ import { verificationEmailUser, verificationEmailAppPass } from "../utils/config
 import Verification from "../models/Verification"
 import User from "../models/User"
 
-const users = [
-    {
-        name: "Seoyeon Park",
-        email: "seoyeonpark1999sk@gmail.com"
-    }
-]
-
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com", // !!! MIGHT NEED TO CHANGE DEPENDING ON WHAT EMAIL WE USE
   port: 465, 

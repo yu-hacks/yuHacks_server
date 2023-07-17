@@ -51,6 +51,10 @@ export const typeDefs = gql`
     email: String!
     password: String!
    }
+   
+   input GoogleAuthInput {
+    token: String!
+   }
 
    input HackerApplicationInput {
     _id: ID!
@@ -65,6 +69,7 @@ export const typeDefs = gql`
     clothingSize: String
    }
 
+
    type Query {
     users: [User!]!
     user(_id: ID!): User
@@ -74,5 +79,6 @@ export const typeDefs = gql`
     loginUser(input: LoginInput!): User!
     registerUser(input: RegistrationInput!): User!
     applyHacker(input: HackerApplicationInput!): User!
+    authGoogleuser(input: GoogleAuthInput!): User!
    }
 `;

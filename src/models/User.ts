@@ -37,7 +37,7 @@ const UserSchema: Schema<IUser> = new Schema ({
     password: { type:String, required: false,},
     registrationDate: { type: Date, required: true, default: Date.now},
     role: { type:String, required: true, enum: UserRole},
-    team: { type: Types.ObjectId, ref: 'Team'},
+    team: { type: mongoose.Schema.Types.ObjectId, ref: 'Team'},
 
     school: {type: String, required: false},
     year: {type: String, required: false},

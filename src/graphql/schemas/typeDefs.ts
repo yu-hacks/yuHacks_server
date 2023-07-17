@@ -1,4 +1,5 @@
 import { gql } from 'apollo-server-express';
+import {Upload} from   "graphql-upload-minimal"; 
 
 
 export const typeDefs = gql`
@@ -59,14 +60,36 @@ export const typeDefs = gql`
     clothingSize: String
    }
 
-   type Query {
+   scalar Upload
+
+  type File {
+    filename: String!
+    mimetype: String!
+    encoding: String!
+  }
+
+  type FileUploadResponse {
+    ETag: String!
+    Location: String!
+    key: String!
+    Key: String!
+    Bucket: String!
+  }
+
+  type Mutation {
+    fileUpload(file: Upload!): FileUploadResponse!
+  }
+
+  type Query {
     users: [User!]!
     user(_id: ID!): User
-   }
+  }
 
-   type Mutation {
+  type Mutation {
     loginUser(input: LoginInput!): User!
     registerUser(input: RegistrationInput!): User!
     applyHacker(input: HackerApplicationInput!): User!
-   }
+    fileUpload(file: Upload!): FileUploadResponse!
+  }
+
 `;

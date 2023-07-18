@@ -1,5 +1,6 @@
 import { dbURI } from "../utils/config";
 const mongoose = require("mongoose");
+const { MongoClient, ServerApiVersion } = require("mongodb");
 
 const connectDB = async () => {
   try {
@@ -9,6 +10,9 @@ const connectDB = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
+
+    
+    
     console.log("MongoDB connected!");
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);

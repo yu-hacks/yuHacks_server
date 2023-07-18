@@ -1,4 +1,5 @@
 import { gql } from 'apollo-server-express';
+import {Upload} from   "graphql-upload-minimal"; 
 
 
 export const typeDefs = gql`
@@ -8,6 +9,8 @@ export const typeDefs = gql`
         SPONSOR
         ADMIN
     }
+
+    scalar Upload
 
     type User {
         _id: ID!
@@ -69,7 +72,6 @@ export const typeDefs = gql`
     clothingSize: String
    }
 
-
    type Query {
     users: [User!]!
     user(_id: ID!): User
@@ -78,7 +80,9 @@ export const typeDefs = gql`
    type Mutation {
     loginUser(input: LoginInput!): User!
     registerUser(input: RegistrationInput!): User!
-    applyHacker(input: HackerApplicationInput!): User!
+    applyHacker(input: HackerApplicationInput!, file:Upload ): User!
     authGoogleuser(input: GoogleAuthInput!): User!
+    
+    
    }
 `;

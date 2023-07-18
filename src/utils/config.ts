@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 
 let path;
-  path = `${__dirname}/../../.env.development`;
+  path = `${__dirname}/../../.env`;
 
 dotenv.config({ path: path });
 export const publicKey: string = process.env.publicKey ? process.env.publicKey: " "

@@ -1,4 +1,7 @@
 import express from 'express'
+const expressGraphql = require("express-graphql").graphqlHTTP;
+const { graphqlUploadExpress } = require("graphql-upload-minimal");
+
 import { Request, Response } from 'express'
 import { typeDefs } from './graphql/schemas/typeDefs'
 import resolvers from './graphql/resolvers/resolvers'
@@ -14,11 +17,14 @@ const startServer = async() => {
     const server = new ApolloServer({
       typeDefs,
       resolvers,
+      introspection: true,
       context: ({ req, res }: { req: Request; res: Response }) => ({
         req,
         res,
       }),
     });
+
+    app.use(graphqlUploadExpress());
 
     await server.start();
 
@@ -28,6 +34,9 @@ const startServer = async() => {
 
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
+      graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
+
+       expressGraphql({ schema: require("./graphql/schemas/typeDefs") })
       console.log(`Server is running on port ${PORT}`);
     });
 

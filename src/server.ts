@@ -32,7 +32,7 @@ const startServer = async() => {
 
     connectDB();
 
-    const PORT = process.env.PORT || 3000;
+    const PORT = process.env.PORT || 4000;
     app.listen(PORT, () => {
       graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
 

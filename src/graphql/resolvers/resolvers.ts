@@ -2,21 +2,22 @@ const express = require("express");
 const expressGraphql = require("express-graphql");
 const { graphqlUploadExpress } = require("graphql-upload-minimal");
 
-import User, { IUser, UserRole } from '../../models/User'
+import User, { UserRole } from '../../models/User'
 import { IResolvers } from '@graphql-tools/utils'
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { sendVerificationEmail } from '../../controllers/verificationEmail';
-import { connect } from 'mongoose';
-import { typeDefs } from '../schemas/typeDefs';
-import { Args } from 'type-graphql';
-import { ApolloError, ApolloServer } from 'apollo-server-express';
+import { ApolloError } from 'apollo-server-express';
 const { createWriteStream } = require("fs");
 import stream from "stream";
 import {s3, bucket} from '../../utils/aws-config';
+import { IAuthenticatedUser, IAccessToken } from '../../models/AuthenticatedUser';
+import { signJwt } from '../../utils/jwt';
+import { GraphQLError } from 'graphql';
 
 
-export const createUploadStream = (key) =>{
+export const createUploadStream = (key
+  : any) =>{
   const pass = new stream.PassThrough();
 
   return{
@@ -31,12 +32,38 @@ export const createUploadStream = (key) =>{
 
 const resolvers: IResolvers = {
   Query: {
-    users: async () => {
-      console.log("HELLO")
-      return await User.find();
+    users: async (_,args,contextValue) => {
+      try{
+        const user: IAuthenticatedUser = contextValue as IAuthenticatedUser
+        if(user.role.toString() == UserRole.ADMIN.toString() || user.role.toString() == UserRole.SPONSOR.toString()){ // return all users 
+          return await User.find();
+        }else{
+          return [] // return empty list for Non admins/sponsors
+        }
+      }catch(error){
+        console.log(error)
+        throw new GraphQLError('Authentication error')
+      }
+      
     },
-    user: async (_, args: { _id: string }) => {
-      return await User.findById(args._id);
+    user: async (_, args: { _id: string }, contextValue) => {
+      try{
+        const user: IAuthenticatedUser = contextValue as IAuthenticatedUser
+       if(user.role != undefined){
+        if(user.role == UserRole.ADMIN || user.id == args._id){
+            return await User.findById(args._id);
+          }else{
+            throw new Error('Higher permissions required')
+        }
+       }else{
+        throw new GraphQLError('Unable to parse user')
+       }
+      }catch(error: any){
+        console.log(error)
+        throw new GraphQLError(error.message)
+      }
+
+      
     },
   },
   Upload: require("graphql-upload-minimal").GraphQLUpload,
@@ -59,7 +86,15 @@ const resolvers: IResolvers = {
         console.log("Failed sending verification email to " + args.input.email + ". Trying again.");
         sendVerificationEmail(args.input.firstName, args.input.email) ? console.log("Succesfully sent") : console.log("Failed sending again"); 
       }
-      return newUser;
+
+      const accessToken: IAccessToken = {
+        token: signJwt({
+          email: newUser.email,
+          id: newUser._id,
+          role: newUser.role.toString()
+        })
+      }
+      return accessToken;
     },
 
     applyHacker: async (_, { input, file }) => {
@@ -80,7 +115,7 @@ const resolvers: IResolvers = {
         stream.pipe(uploadStream.writeStream);
         result = await uploadStream.promise;
       }
-      catch(error){
+      catch(error: any){
         console.log(`[Error]: Message: ${error.message}, Stack: ${error.stack}`)
         throw new ApolloError("Error uploaidng");
       }
@@ -94,10 +129,10 @@ const resolvers: IResolvers = {
     },
 
     loginUser: async (_, args: { input: { email: string; password: string } }) => {
-      const user = await User.findOne({ email: args.input.email });
+      const user = await User.findOne({ email: new RegExp(`^${args.input.email}$`, 'i') });
 
       if (!user) {
-        throw new Error("User not found");
+        throw new Error("Email/Password combination is incorrect");
       }
 
       const isEqual = await bcrypt.compare(
@@ -106,14 +141,17 @@ const resolvers: IResolvers = {
       );
 
       if (!isEqual) {
-        throw new Error("Password is incorrect");
+        throw new Error("Email/Password combination is incorrect");
       }
 
-      const token = jwt.sign({ _id: user.id, email: user.email }, "xxxx", {
-        expiresIn: "1h",
-      });
-
-      return { _id: user.id, token: token, tokenExpiration: 1 };
+      const accessToken: IAccessToken = {
+        token: signJwt({
+          email: user.email,
+          id: user._id,
+          role: user.role.toString()
+        })
+      }
+      return accessToken;
     },
   },
 };

@@ -42,6 +42,9 @@ export const typeDefs = gql`
         verificationToken: String!
         date: String!
     }
+    type AccessToken{
+        token: String!
+    }
 
     input LoginInput {
         email: String!
@@ -78,8 +81,8 @@ export const typeDefs = gql`
    }
 
    type Mutation {
-    loginUser(input: LoginInput!): User!
-    registerUser(input: RegistrationInput!): User!
+    loginUser(input: LoginInput!): AccessToken!
+    registerUser(input: RegistrationInput!): AccessToken!
     applyHacker(input: HackerApplicationInput!, file:Upload ): User!
     authGoogleuser(input: GoogleAuthInput!): User!
     

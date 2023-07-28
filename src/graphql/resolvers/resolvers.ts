@@ -55,10 +55,13 @@ const resolvers: IResolvers = {
       args.input.password = await bcrypt.hash(args.input.password, 10);
       const newUser = new User({ ...args.input, role: UserRole.PENDING, emailVerified: false});
       await newUser.save();
-      if (!sendVerificationEmail(args.input.firstName, args.input.email)) {
-        console.log("Failed sending verification email to " + args.input.email + ". Trying again.");
-        sendVerificationEmail(args.input.firstName, args.input.email) ? console.log("Succesfully sent") : console.log("Failed sending again"); 
-      }
+      // try {
+      //   await sendVerificationEmail(args.input.firstName, args.input.email)
+      // } catch {
+      //   console.log(`Failed to send verification email to ${args.input.email}, deleting user.`);
+      //   await User.deleteOne(newUser._id)
+      //   throw new Error("Something went wrong, please contact an organizer.");
+      // }
       return newUser;
     },
 
@@ -82,7 +85,7 @@ const resolvers: IResolvers = {
       }
       catch(error){
         console.log(`[Error]: Message: ${error.message}, Stack: ${error.stack}`)
-        throw new ApolloError("Error uploaidng");
+        throw new ApolloError("Error uploading");
       }
       Object.assign(user, input);
       user.role = UserRole.HACKER;

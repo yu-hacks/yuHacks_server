@@ -5,17 +5,20 @@ import Verification from "../models/Verification"
 import User from "../models/User"
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com", // !!! MIGHT NEED TO CHANGE DEPENDING ON WHAT EMAIL WE USE
+  host: "smtpout.secureserver.net", 
   port: 465, 
   secure: true, // true for 465, false for other ports
   auth: {
     user: verificationEmailUser,
     pass: verificationEmailAppPass 
   },
+  tls: {
+    ciphers:'SSLv3'
+  }
 });
 
 
-export function sendVerificationEmail(name: string, email: string): boolean {
+export async function sendVerificationEmail(name: string, email: string): Promise<boolean> {
   let verificationToken = uuidv4();
 
   let mailOptions = { // !!! CHANGE WORDING AND FORMAT
@@ -28,10 +31,12 @@ export function sendVerificationEmail(name: string, email: string): boolean {
       <p>If that doesn't work try using this link: https://yuhacks.com/verifyUser/${verificationToken}</p>`
   };
 
-  transporter.sendMail(mailOptions, async (error, info) => {
+  return new Promise((resolve, reject) => { 
+    transporter.sendMail(mailOptions, async (error, info) => {
+      reject(new Error(error.message));
       if (error) {
         console.log("Error occurred:", error);
-        return false;
+        reject(new Error(error.message));
       } else {
         console.log("Email sent:", info.response);
         const newVerification = new Verification({
@@ -40,10 +45,10 @@ export function sendVerificationEmail(name: string, email: string): boolean {
           date: new Date()
         });
         await newVerification.save();
+        resolve(info);
       }
-    });
-
-    return true;
+    })
+  });
 }
 
 export async function verifyToken(verificationToken: string): Promise<number> {

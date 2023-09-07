@@ -10,6 +10,14 @@ export const typeDefs = gql`
         ADMIN
     }
 
+    enum AppStatus {
+        INCOMPLETE
+        PENDING
+        REJECTED 
+        APPROVED
+        WAITLISTED
+    }
+
     scalar Upload
 
     type User {
@@ -22,10 +30,13 @@ export const typeDefs = gql`
         role: UserRole!
         emailVerified: Boolean!
         passwordResetToken: String!
-        team: ID!
         token: String
         tokenExpiration: Int
 
+        appSubmissionDate: String,
+        appStatus: AppStatus,
+
+        team: ID
         school: String
         year: String
         website: String
@@ -41,6 +52,19 @@ export const typeDefs = gql`
         email: String!
         verificationToken: String!
         date: String!
+    }
+
+    type appStatusApp {
+        pendingUsers: Int !
+        rejectedUsers: Int!
+        approvedUsers: Int!
+        waitlistedUsers: Int!
+        incompleteUsers: Int!
+    }
+
+    type SignupsAndSubmissions {
+        signupCounts: [Int]!
+        submissionCounts: [Int]!
     }
 
     input LoginInput {
@@ -75,6 +99,10 @@ export const typeDefs = gql`
    type Query {
     users: [User!]!
     user(_id: ID!): User
+    usersSignupsSubmissionsInDay: SignupsAndSubmissions!
+    usersSignupsSubmissionsInWeek: SignupsAndSubmissions!
+    usersSignupsSubmissionsInMonth: SignupsAndSubmissions!
+    appStatusStats: appStatusApp!
    }
 
    type Mutation {

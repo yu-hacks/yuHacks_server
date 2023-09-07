@@ -5,10 +5,19 @@ export enum UserRole {
     HACKER = "HACKER",
     SPONSOR = "SPONSOR",
     ADMIN = "ADMIN",
-    PENDING = 'PENDING',
+    PENDING = 'PENDING'
+}
+
+export enum AppStatus {
+    INCOMPLETE = "INCOMPLETE",
+    PENDING = "PENDING REVIEW",
+    REJECTED = "REJECTED",
+    APPROVED = "APPROVED",
+    WAITLISTED = 'WAITLISTED'
 }
 
 export interface IUser {
+    // General
     _id?: ObjectId,
     firstName: String,
     lastName: String,
@@ -18,8 +27,13 @@ export interface IUser {
     role: UserRole,
     emailVerified: Boolean,
     passwordResetToken?: String,
-    team?: Types.ObjectId | undefined;
 
+    // Application
+    appSubmissionDate?: Date,
+    appStatus?: AppStatus,
+
+    // Hacker
+    team?: Types.ObjectId | undefined;
     school?: String,
     year?: String,
     website?: String,
@@ -39,8 +53,11 @@ const UserSchema: Schema<IUser> = new Schema ({
     registrationDate: { type: Date, required: true, default: Date.now},
     role: { type:String, required: true, enum: UserRole},
     emailVerified: { type:Boolean, required: true, default: false},
-    team: { type: Types.ObjectId, ref: 'Team'},
+    
+    appSubmissionDate: { type:Date, required: false},
+    appStatus: { type:String, required: false, enum: AppStatus},
 
+    team: { type: Types.ObjectId, required: false, ref: 'Team'},
     school: {type: String, required: false},
     year: {type: String, required: false},
     website: {type: String, required: false},
